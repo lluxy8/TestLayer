@@ -1,0 +1,22 @@
+﻿@model IEnumerable<PageViewModel>
+
+<div class="container">
+    <h1 class="text-center">@ViewBag.error</h1>
+    <div class="row d-flex">
+        @foreach(var i in Model)
+        {
+            <div class="col-md-4 col-sm-12 rounded border p-3">
+                <a class="text-dark nav-link d-flex flex-column" href="@Url.Action("Index","Page", new { id = i.Id})">
+                    <h1 class="my-3">@Html.Raw(StringExtensions.Truncate(i.Title, 30))</h1>
+
+                    <div class="d-flex justify-content-between">
+                        <span>By @i.CreatedBy</span>
+                        <span>@i.CreatedAt.Day/@i.CreatedAt.Month/@i.CreatedAt.Year</span>
+                    </div>
+
+                    <span class="ms-auto">@i.Likes Likes</span>
+                </a>
+            </div>            
+        }
+    </div>
+</div>  

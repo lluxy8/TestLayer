@@ -1,0 +1,26 @@
+﻿<form id="pageform" action="" method="post">
+    <div class="d-grid gap-2">
+        <input class="form-control" type="text" name="title" placeholder="title" />
+        <textarea id="summernote" placeholder="content"></textarea>
+        <input type="hidden" id="contentinput" name="content" />
+
+        <button type="submit" class="btn btn-primary my-3 w-25">Create</button>
+
+        <span class="text-danger">@ViewBag.error</span>
+    </div>
+</form>
+
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function() {
+            $('#pageform').submit(function(event) {
+                var summernoteContent = $('#summernote').summernote('code');
+                var minifiedContent = minifyHTML(summernoteContent);
+                $('#contentinput').val(minifiedContent);
+            });
+        });
+
+    </script>
+}

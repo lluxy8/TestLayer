@@ -1,0 +1,97 @@
+﻿@model UserViewModel
+
+@{
+    string userpp = $"{Model.Id}.png";
+}
+
+<div class="d-flex gap-3 my-2">
+    <div data-field="img" class="editable editable-img" style="width:100px;height:100px;">
+        <img class="w-100 h-100 rounded shadow" style="object-fit:cover;" src="~/uploads/profilepic/@userpp" alt="@Model.Username" />
+        <i class="edit-icon-img">✏️</i>
+    </div>
+
+    <div class="d-flex flex-column">
+        <div data-field="username" class="editable editable-txt">
+            <h1 class="m-0">@Model.Username</h1>
+            <i class="edit-icon-txt">✏️</i>
+        </div>
+
+        <div data-field="name" class="editable editable-txt">
+            <span class="text-secondary">@Model.FullName</span>
+            <i class="edit-icon-txt">✏️</i>
+        </div>
+        
+    </div>
+</div>
+
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        $(document).on("click", ".editable", function () {
+            let fieldType = $(this).data("field"); 
+            let fieldTitle = `Change ${fieldType.charAt(0).toUpperCase() + fieldType.slice(1)}`; 
+
+            if(fieldType === "img")
+            {
+                fieldTitle = "Change Profile Picture";
+            }
+
+            showEditModal(fieldTitle, fieldType);
+        });
+    });
+
+
+
+    function showEditModal(title, fieldName) {
+        const generateFormHtml = (field) => {
+            return `
+                <form action="@Url.Action("ChangeUserField", "Account")" method="post" id="editForm">
+                    <input type="hidden" name="field" value="${field}" />
+                    <div class="d-grid gap-2">
+                        <input class="form-control" placeholder="New ${field}" type="text" name="value" required />
+                    </div>
+                </form>
+            `;
+        };
+
+        let html = '';
+        switch(fieldName) {
+            case "name":
+                html =  html = `${generateFormHtml("name")} <span class="editable editable-txt px-1 text-primary" data-field="surname" href="#">Change Surname</a>`;;
+                break;
+            case "img":
+                html = `
+                    <form enctype="multipart/form-data"" action="@Url.Action("UploadPp", "Account")" method="post" id="editForm">
+                        <div class="d-grid gap-2">
+                            <input class="form-control" type="file" name="file" required />
+                        </div>
+                    </form>
+                `;
+                break;
+            default:
+                html = generateFormHtml(fieldName);
+                break;
+        }
+
+        Swal.fire({
+            title: `<strong>${title}</strong>`,
+            html: html,
+            showCloseButton: true,
+            showCancelButton: false,
+            focusConfirm: false,
+            confirmButtonText: `Change`,
+            preConfirm: () => {
+                document.getElementById("editForm").submit();
+            }
+        });
+    }
+
+
+
+</script>
+
+
+

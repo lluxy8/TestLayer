@@ -1,0 +1,65 @@
+﻿@model IEnumerable<PageViewModel>
+
+<h1 class="text-center">@ViewBag.error</h1>
+
+<div class="d-flex justify-content-between align-items-center mt-5 border-bottom">
+    <h1 class="display-6">Pages</h1>
+    <a class="btn btn-primary h-50" href="@Url.Action("CreatePage", "Page")">Create New</a>
+</div>
+<div class="row d-flex justify-content-center mt-3">
+    @foreach (var i in Model)
+    {
+        <a class="text-dark nav-link p-0" href="@Url.Action("Index","Page", new { id = i.Id})">
+            <div data-del="@i.Id" class="col-sm-12  d-flex flex-column rounded border p-4">
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="my-3">@Html.Raw(StringExtensions.Truncate(i.Title, 30))</h1>
+
+                    <button data-del="@i.Id" id="delbtn" class="btn btn-danger min-btn">Delete</button>
+                </div>
+
+
+
+                <div class="d-flex justify-content-between">
+                    <span>By @i.CreatedBy</span>
+                    <span>@i.CreatedAt.Day/@i.CreatedAt.Month/@i.CreatedAt.Year</span>
+                </div>
+
+                <span class="ms-auto">@i.Likes Likes</span>
+
+            </div>
+        </a>
+
+    }
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        $(document).on("click","#delbtn", function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const delId = $(this).data("del");
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCloseButton: true,
+                showCancelButton: true,
+                focusConfirm: false,
+                confirmButtonText: "Yes, delete it!",
+                preConfirm: () => {
+                    $.ajax({
+                        url: "@Url.Action("DeletePage","Page")",
+                        method: "POST",
+                        data: {id: delId},
+                        success: function() {
+                            $(document).find(`[data-del='${delId}']`).remove();
+                        }
+                    })
+                    
+                }
+            });
+        });
+    });
+</script>

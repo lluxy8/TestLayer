@@ -1,0 +1,50 @@
+﻿@model PageViewModel
+<style>
+    img{
+    max-width: 100% !important;
+    object-fit:cover;
+    border-radius:20px;
+    }
+</style>
+
+
+@if(!ViewBag.liked)
+{
+    <div id="likecontainer" class="container rounded border d-flex flex-column justify-content-center align-items-center p-3">
+        <span class="m-0">Found this page helpful?</span>
+        <div class="">
+            <button id="likebtn" class="btn"><i class="fa-solid fa-thumbs-up"></i></button>
+            <button id="disslikebtn" class="btn"><i class="fa-solid fa-thumbs-down"></i></button>
+        </div>
+    </div>
+}
+
+<div class="container">
+    <h1>@Html.Raw(Model.Title)</h1>
+    <p>@Html.Raw(Model.Content)</p>
+
+    <div class="border-top d-flex justify-content-between py-3">
+        <span>By @Model.CreatedBy</span>
+        <span>@Model.CreatedAt.Day/@Model.CreatedAt.Month/@Model.CreatedAt.Year</span>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+            $(document).on("click","#likebtn", function(e) {
+                $.ajax({
+                url: "@Url.Action("LikePage", "Page")",
+                method: "POST",
+                data: {id: @Model.Id},
+                success: function() {
+                    $("#likecontainer").remove();
+                }
+                });
+            });
+
+            $(document).on("click","#disslikebtn", function(e) {
+                $("#likecontainer").remove();
+            });
+    });
+</script>

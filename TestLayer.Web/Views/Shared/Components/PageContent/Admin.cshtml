@@ -1,0 +1,72 @@
+﻿@model PageViewModel
+<style>
+    img {
+        max-width: 100% !important;
+        object-fit: cover;
+        border-radius: 20px;
+    }
+</style>
+
+<div class="container">
+    <div class="d-flex justify-content-between  align-items-center">
+        <h1>@Html.Raw(Model.Title)</h1>
+        <button id="editbtn" class="btn btn-primary">Edit</button>
+    </div>
+    <p>@Html.Raw(Model.Content)</p>
+    
+
+    <div class="border-top d-flex justify-content-between py-3">
+        <span>By @Model.CreatedBy</span>
+        <span>@Model.CreatedAt.Day/@Model.CreatedAt.Month/@Model.CreatedAt.Year</span>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        $(document).on("click", "#editbtn", function () {
+            Swal.fire({
+                title: `<strong>Edit Content</strong>`,
+                html: `
+                    <form action="@Url.Action("UpdatePage", "Page")" method="post" id="editForm">
+                        <div class="d-grid gap-3">
+                            <input type="hidden" value="@Model.Id" name="id"></input>
+                            <input class="form-control" placeholder="New Title" type="text" name="title" value="@Model.Title" required />
+                            <textarea id="summernote" class="form-control" name="value" required>@Model.Content</textarea>
+                            <input type="hidden" id="contentinput" name="content" />
+                        </div>
+                    </form>
+                `,
+                showCloseButton: true,
+                showCancelButton: false,
+                focusConfirm: false,
+                confirmButtonText: `Submit`,
+                didOpen: () => {
+                    $('#summernote').summernote({
+                        placeholder: 'Enter content...',
+                        tabsize: 2,
+                        height: 120,
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture', 'video']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ]
+                    });
+                },
+                preConfirm: () => {
+                    var summernoteContent = $('#summernote').summernote('code');
+                    var minifiedContent = minifyHTML(summernoteContent);
+                    $('#contentinput').val(minifiedContent);
+                    document.getElementById("editForm").submit();
+                }
+            });
+        });
+    });
+
+
+
+
+</script>
